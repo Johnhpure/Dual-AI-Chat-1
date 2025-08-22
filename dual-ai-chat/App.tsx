@@ -54,7 +54,7 @@ const App: React.FC = () => {
   // Gemini Custom API Config State
   const [useCustomApiConfig, setUseCustomApiConfig] = useState<boolean>(() => {
     const storedValue = localStorage.getItem(USE_CUSTOM_API_CONFIG_STORAGE_KEY);
-    return storedValue ? storedValue === 'true' : false; 
+    return storedValue ? storedValue === 'true' : true; // 默认启用自定义API配置
   });
   const [customApiEndpoint, setCustomApiEndpoint] = useState<string>(() => localStorage.getItem(CUSTOM_API_ENDPOINT_STORAGE_KEY) || DEFAULT_GEMINI_CUSTOM_API_ENDPOINT);
   const [customApiKey, setCustomApiKey] = useState<string>(() => localStorage.getItem(CUSTOM_API_KEY_STORAGE_KEY) || '');
@@ -228,12 +228,11 @@ const App: React.FC = () => {
   const isEffectivelyApiKeyMissing = useMemo(() => {
     if (useOpenAiApiConfig) {
       return !openAiApiBaseUrl.trim() || !openAiCognitoModelId.trim() || !openAiMuseModelId.trim();
-    } else if (useCustomApiConfig) {
-      return !customApiKey.trim();
     } else {
-      return !(process.env.API_KEY && process.env.API_KEY.trim() !== "");
+      // 始终使用自定义API配置，不再检查环境变量
+      return !customApiKey.trim();
     }
-  }, [useCustomApiConfig, customApiKey, useOpenAiApiConfig, openAiApiBaseUrl, openAiApiKey, openAiCognitoModelId, openAiMuseModelId]);
+  }, [customApiKey, useOpenAiApiConfig, openAiApiBaseUrl, openAiCognitoModelId, openAiMuseModelId]);
 
   const initializeChat = useCallback(() => {
     setMessages([]);
@@ -245,15 +244,11 @@ const App: React.FC = () => {
     let missingKeyMsg = "";
     if (useOpenAiApiConfig) {
       if (!openAiApiBaseUrl.trim() || !openAiCognitoModelId.trim() || !openAiMuseModelId.trim()) {
-        missingKeyMsg = "OpenAI API 配置不完整 (需要基地址和Cognito/Muse的模型ID)。请在设置中提供，或关闭“使用OpenAI API配置”。";
-      }
-    } else if (useCustomApiConfig) {
-      if (!customApiKey.trim()) {
-        missingKeyMsg = "自定义 Gemini API 密钥未在设置中提供。请在设置中输入密钥，或关闭“使用自定义API配置”。";
+        missingKeyMsg = "OpenAI API 配置不完整 (需要基地址和Cognito/Muse的模型ID)。请在设置中提供，或关闭使用OpenAI API配置。";
       }
     } else {
-      if (!(process.env.API_KEY && process.env.API_KEY.trim() !== "")) {
-        missingKeyMsg = "Google Gemini API 密钥未在环境变量中配置。请配置该密钥，或在设置中启用并提供自定义API配置。";
+      if (!customApiKey.trim()) {
+        missingKeyMsg = "Gemini API 密钥未提供。请在设置中输入密钥。";
       }
     }
 
@@ -385,15 +380,12 @@ const App: React.FC = () => {
     if (useOpenAiApiConfig) {
         if (apiKeyStatus.isMissing) return "OpenAI API 配置不完整 (需基地址和Cognito/Muse模型ID)。请在设置中提供，或关闭 OpenAI API 配置。";
         if (apiKeyStatus.isInvalid) return "提供的 OpenAI API 密钥无效或无法访问服务。请检查设置和网络。";
-    } else if (useCustomApiConfig) {
-        if (apiKeyStatus.isMissing) return "自定义 Gemini API 密钥缺失。请在设置中提供，或关闭自定义 Gemini API 配置。";
-        if (apiKeyStatus.isInvalid) return "提供的自定义 Gemini API 密钥无效或权限不足。请检查设置中的密钥。";
     } else {
-        if (apiKeyStatus.isMissing) return "环境变量中的 Google Gemini API 密钥缺失。请配置，或启用自定义 API 配置。";
-        if (apiKeyStatus.isInvalid) return "环境变量中的 Google Gemini API 密钥无效或权限不足。请检查该密钥。";
+        if (apiKeyStatus.isMissing) return "Gemini API 密钥缺失。请在设置中提供API密钥。";
+        if (apiKeyStatus.isInvalid) return "提供的 Gemini API 密钥无效或权限不足。请检查设置中的密钥。";
     }
     return apiKeyStatus.message; 
-  }, [apiKeyStatus, useCustomApiConfig, useOpenAiApiConfig]);
+  }, [apiKeyStatus, useOpenAiApiConfig]);
 
   const modelSelectorBaseClass = "bg-white border border-gray-400 text-gray-800 text-sm rounded-md p-1.5 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none disabled:opacity-70 disabled:cursor-not-allowed";
   const modelSelectorWidthClass = "w-40 md:w-44"; 

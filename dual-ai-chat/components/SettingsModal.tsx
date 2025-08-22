@@ -241,7 +241,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
               
               {!useOpenAiApiConfig && (
-                <p className="text-xs text-gray-600 text-center mt-1 p-2 bg-gray-100 rounded-md">请确保配置有效的 Gemini API 密钥，或使用 OpenAI 兼容 API。</p>
+                <p className="text-xs text-gray-600 text-center mt-1 p-2 bg-gray-100 rounded-md">请确保配置有效的 Gemini API 密钥，或使用 OpenAI 兼容 API。您必须在此处配置API密钥才能使用应用。</p>
               )}
             </div>
           </section>

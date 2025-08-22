@@ -230,12 +230,43 @@ deploy() {
   
   # 构建和启动容器
   log "INFO" "构建和启动Docker容器..."
+  
+  # 尝试使用标准docker-compose命令
   docker-compose down >> $LOG_FILE 2>&1
   docker-compose up -d --build >> $LOG_FILE 2>&1
   
+  # 检查是否成功
   if [ $? -ne 0 ]; then
-    log "ERROR" "容器启动失败，请查看日志文件: $LOG_FILE"
-    return 1
+    log "WARN" "标准docker-compose命令失败，尝试使用简化配置..."
+    
+    # 尝试使用简化版docker-compose.yml
+    if [ -f "docker-compose.simple.yml" ]; then
+      log "INFO" "使用简化版docker-compose.yml..."
+      docker-compose -f docker-compose.simple.yml down >> $LOG_FILE 2>&1
+      docker-compose -f docker-compose.simple.yml up -d --build >> $LOG_FILE 2>&1
+      
+      if [ $? -ne 0 ]; then
+        log "WARN" "简化版docker-compose也失败，尝试直接使用Docker命令..."
+        
+        # 如果docker-compose仍然失败，尝试使用docker-run.sh脚本
+        if [ -f "docker-run.sh" ]; then
+          log "INFO" "使用docker-run.sh脚本..."
+          chmod +x docker-run.sh
+          ./docker-run.sh >> $LOG_FILE 2>&1
+          
+          if [ $? -ne 0 ]; then
+            log "ERROR" "所有尝试均失败，请查看日志文件: $LOG_FILE"
+            return 1
+          fi
+        else
+          log "ERROR" "找不到docker-run.sh脚本，请手动部署"
+          return 1
+        fi
+      fi
+    else
+      log "ERROR" "找不到简化版docker-compose.yml文件，请手动部署"
+      return 1
+    fi
   fi
   
   log "INFO" "应用部署完成"

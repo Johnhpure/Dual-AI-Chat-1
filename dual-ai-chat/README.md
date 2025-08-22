@@ -10,31 +10,33 @@
    ```bash
    npm install
    ```
-2. 在`.env.local`文件中设置`GEMINI_API_KEY`为您的Gemini API密钥
-3. 运行应用:
+2. 运行应用:
    ```bash
    npm run dev
    ```
+3. 在应用设置中配置API密钥:
+   - 点击右上角的设置图标
+   - 在"API配置"部分输入您的Gemini API密钥
+   - 或者配置OpenAI兼容API
 
 ## 使用Docker运行
 
 ### 方法1：使用Docker Compose（推荐）
 
-1. 复制环境变量示例文件并填写API密钥:
-   ```bash
-   cp docker-env.example .env
-   # 编辑.env文件，填入您的API密钥
-   ```
-
-2. 构建并启动容器:
+1. 构建并启动容器:
    ```bash
    docker-compose up -d
    ```
 
-3. 访问应用:
+2. 访问应用:
    ```
    http://localhost:8080
    ```
+
+3. 在应用设置中配置API密钥:
+   - 点击右上角的设置图标
+   - 在"API配置"部分输入您的Gemini API密钥
+   - 或者配置OpenAI兼容API
 
 ### 方法2：直接使用Docker命令
 
@@ -46,9 +48,6 @@
 2. 运行Docker容器:
    ```bash
    docker run -d -p 8080:80 \
-     -e GEMINI_API_KEY=your_gemini_api_key \
-     -e OPENAI_API_KEY=your_openai_api_key \
-     -e OPENAI_BASE_URL=https://api.openai.com \
      --name dual-ai-chat \
      dual-ai-chat
    ```
@@ -57,6 +56,11 @@
    ```
    http://localhost:8080
    ```
+
+4. 在应用设置中配置API密钥:
+   - 点击右上角的设置图标
+   - 在"API配置"部分输入您的Gemini API密钥
+   - 或者配置OpenAI兼容API
 
 ## 部署到服务器
 
@@ -73,26 +77,29 @@
    cd /opt/dual-ai-chat
    ```
 
-3. 创建环境变量文件:
-   ```bash
-   cp docker-env.example .env
-   # 编辑.env文件，填入您的API密钥
-   ```
-
-4. 使用Docker Compose部署:
+3. 启动应用:
    ```bash
    docker-compose up -d
    ```
 
-5. 访问应用:
+4. 访问应用:
    ```
    http://47.79.145.239:8080
    ```
 
-## 环境变量
+5. 在应用设置中配置API密钥:
+   - 点击右上角的设置图标
+   - 在"API配置"部分输入您的Gemini API密钥
+   - 或者配置OpenAI兼容API
 
-| 变量名 | 描述 | 是否必需 |
+## API配置
+
+应用需要在设置中配置以下API信息：
+
+| 配置项 | 描述 | 是否必需 |
 |--------|------|----------|
-| GEMINI_API_KEY | Google Gemini API密钥 | 是 |
-| OPENAI_API_KEY | OpenAI API密钥 | 否 |
-| OPENAI_BASE_URL | OpenAI API基础URL | 否 |
+| Gemini API密钥 | Google Gemini API密钥 | 是（除非使用OpenAI API） |
+| Gemini API端点 | 自定义API端点（可选） | 否 |
+| OpenAI API密钥 | OpenAI或兼容API密钥 | 是（如果启用OpenAI API） |
+| OpenAI API基础URL | API服务器地址 | 是（如果启用OpenAI API） |
+| OpenAI模型ID | 使用的模型标识符 | 是（如果启用OpenAI API） |

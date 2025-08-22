@@ -123,27 +123,27 @@ export const useChatLogic = ({
         const currentOpenAiModelId = modelDetailsForStep.apiName;
 
 
-        if (useOpenAiApiConfig) {
-          result = await generateOpenAiResponse(
-            prompt,
-            currentOpenAiModelId, 
-            openAiApiKey,
-            openAiApiBaseUrl,
-            modelDetailsForStep.supportsSystemInstruction ? systemInstructionToUse : undefined,
-            imageApiPartForStep ? { mimeType: imageApiPartForStep.inlineData.mimeType, data: imageApiPartForStep.inlineData.data } : undefined
-          );
-        } else { 
-          result = await generateGeminiResponse(
-            prompt,
-            modelDetailsForStep.apiName, 
-            useCustomApiConfig, 
-            customApiKey, 
-            customApiEndpoint, 
-            modelDetailsForStep.supportsSystemInstruction ? systemInstructionToUse : undefined,
-            imageApiPartForStep,
-            thinkingConfigToUseForGemini
-          );
-        }
+              if (useOpenAiApiConfig) {
+        result = await generateOpenAiResponse(
+          prompt,
+          currentOpenAiModelId, 
+          openAiApiKey,
+          openAiApiBaseUrl,
+          modelDetailsForStep.supportsSystemInstruction ? systemInstructionToUse : undefined,
+          imageApiPartForStep ? { mimeType: imageApiPartForStep.inlineData.mimeType, data: imageApiPartForStep.inlineData.data } : undefined
+        );
+      } else { 
+        result = await generateGeminiResponse(
+          prompt,
+          modelDetailsForStep.apiName, 
+          true, // 始终使用自定义API配置 
+          customApiKey, 
+          customApiEndpoint, 
+          modelDetailsForStep.supportsSystemInstruction ? systemInstructionToUse : undefined,
+          imageApiPartForStep,
+          thinkingConfigToUseForGemini
+        );
+      }
 
         if (cancelRequestRef.current) throw new Error("用户取消操作");
         
@@ -648,7 +648,7 @@ export const useChatLogic = ({
         result = await generateGeminiResponse(
           updatedStepToRetry.prompt,
           modelForRetry.apiName, 
-          useCustomApiConfig,
+          true, // 始终使用自定义API配置
           customApiKey, 
           customApiEndpoint, 
           updatedStepToRetry.systemInstruction,

@@ -61,20 +61,12 @@ export const generateResponse = async (
     let invalidKeyUserMessage = "API密钥无效或权限不足。请检查您的API密钥配置和权限。";
 
 
-    if (useCustomConfig) {
-      apiKeyToUse = customApiKey?.trim();
-      endpointForClient = customApiEndpoint; // createGoogleAIClient handles if it's empty/default
-      missingKeyUserMessage = "自定义API密钥未在设置中提供。请在设置中输入密钥，或关闭“使用自定义API配置”以使用环境变量。";
-      if (apiKeyToUse) { // If custom key is provided, tailor invalid message slightly
-        invalidKeyUserMessage = "提供的自定义API密钥无效或权限不足。请检查设置中的密钥。";
-      }
-    } else {
-      apiKeyToUse = process.env.API_KEY;
-      endpointForClient = undefined; // Ensures default Google endpoint is used by SDK
-      missingKeyUserMessage = "API密钥未在环境变量中配置。请配置该密钥，或在设置中启用并提供自定义API配置。";
-      if (apiKeyToUse) { // If env key is present, tailor invalid message
-         invalidKeyUserMessage = "环境变量中的API密钥无效或权限不足。请检查该密钥。";
-      }
+    // 始终使用自定义API配置，不再依赖环境变量
+    apiKeyToUse = customApiKey?.trim();
+    endpointForClient = customApiEndpoint; // createGoogleAIClient handles if it's empty/default
+    missingKeyUserMessage = "API密钥未提供。请在设置中输入Gemini API密钥。";
+    if (apiKeyToUse) { // If custom key is provided, tailor invalid message slightly
+      invalidKeyUserMessage = "提供的API密钥无效或权限不足。请检查设置中的密钥。";
     }
 
     if (!apiKeyToUse) {
@@ -124,13 +116,9 @@ export const generateResponse = async (
     let specificMissingKeyMsg = "API密钥未配置。";
     let specificInvalidKeyMsg = "API密钥无效或权限不足。";
 
-    if (useCustomConfig) {
-        specificMissingKeyMsg = "自定义API密钥未在设置中提供。";
-        specificInvalidKeyMsg = customApiKey?.trim() ? "提供的自定义API密钥无效或权限不足。" : specificMissingKeyMsg;
-    } else {
-        specificMissingKeyMsg = "API密钥未在环境变量中配置。";
-        specificInvalidKeyMsg = process.env.API_KEY ? "环境变量中的API密钥无效或权限不足。" : specificMissingKeyMsg;
-    }
+    // 简化错误消息，不再区分环境变量和自定义配置
+    specificMissingKeyMsg = "API密钥未提供。";
+    specificInvalidKeyMsg = customApiKey?.trim() ? "提供的API密钥无效或权限不足。" : specificMissingKeyMsg;
 
 
     if (error instanceof Error) {

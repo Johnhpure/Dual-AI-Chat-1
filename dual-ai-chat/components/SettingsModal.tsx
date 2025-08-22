@@ -155,42 +155,31 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             <h3 id="api-config-settings-heading" className={sectionHeadingClass}>API 配置</h3>
             <div className="space-y-5">
               {/* Gemini Custom API */}
-              <div className={`p-4 border rounded-lg ${useCustomApiConfig ? 'border-sky-300 bg-sky-50' : 'border-gray-200 bg-gray-50'}`}>
+              <div className="p-4 border rounded-lg border-sky-300 bg-sky-50">
                 <div className="flex items-center justify-between mb-3">
-                  <label htmlFor="useCustomGeminiApiToggle" className={`${toggleLabelBaseClass} ${isLoading ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer hover:text-sky-600'}`}
-                    title={useCustomApiConfig ? "禁用自定义Gemini API配置" : "启用自定义Gemini API配置"}>
+                  <label htmlFor="geminiApiSettings" className={`${toggleLabelBaseClass}`}>
                     <Settings size={20} className="mr-2 text-sky-600" />
-                    <span className="select-none">使用自定义 Gemini API 配置:</span>
+                    <span className="select-none">Gemini API 配置:</span>
                   </label>
-                  <div className={toggleButtonContainerClass}>
-                      <button
-                          id="useCustomGeminiApiToggle"
-                          onClick={handleUseCustomGeminiApiConfigToggle}
-                          className={`${toggleButtonClass} ${isLoading ? 'cursor-not-allowed opacity-70' : ''}`}
-                          disabled={isLoading} role="switch" aria-checked={useCustomApiConfig} >
-                          <span className={`${toggleButtonSwitchClass} ${useCustomApiConfig ? 'bg-sky-500' : 'bg-gray-300'}`}></span>
-                          <span className={`${toggleButtonKnobClass} ${useCustomApiConfig ? 'translate-x-4' : ''}`}></span>
-                      </button>
-                      <span className={toggleTextClass}>{useCustomApiConfig ? '开启' : '关闭'}</span>
-                  </div>
                 </div>
                 <div className="space-y-3 pl-1">
                   <div>
-                    <label htmlFor="customApiEndpoint" className={`flex items-center text-sm font-medium mb-1 ${useCustomApiConfig ? 'text-gray-700' : 'text-gray-400'}`}>
-                      <Globe size={16} className={`mr-2 ${useCustomApiConfig ? 'text-sky-600' : 'text-gray-400'}`} />
+                    <label htmlFor="customApiEndpoint" className="flex items-center text-sm font-medium mb-1 text-gray-700">
+                      <Globe size={16} className="mr-2 text-sky-600" />
                       Gemini API 端点 (可选)
                     </label>
                     <input type="text" id="customApiEndpoint" value={customApiEndpoint} onChange={onCustomApiEndpointChange} className={inputBaseClass}
-                      placeholder="例如: https://my-proxy.com/gemini" disabled={isLoading || !useCustomApiConfig} aria-label="自定义 Gemini API 端点" />
-                    <p className={`text-xs mt-1 ${useCustomApiConfig ? 'text-gray-500' : 'text-gray-400'}`}>若留空，将使用默认 Google API 端点。</p>
+                      placeholder="例如: https://my-proxy.com/gemini" disabled={isLoading} aria-label="Gemini API 端点" />
+                    <p className="text-xs mt-1 text-gray-500">若留空，将使用默认 Google API 端点。</p>
                   </div>
                   <div>
-                    <label htmlFor="customApiKey" className={`flex items-center text-sm font-medium mb-1 ${useCustomApiConfig ? 'text-gray-700' : 'text-gray-400'}`}>
-                      <KeyRound size={16} className={`mr-2 ${useCustomApiConfig ? 'text-sky-600' : 'text-gray-400'}`} />
+                    <label htmlFor="customApiKey" className="flex items-center text-sm font-medium mb-1 text-gray-700">
+                      <KeyRound size={16} className="mr-2 text-sky-600" />
                       Gemini API 密钥
                     </label>
                     <input type="password" id="customApiKey" value={customApiKey} onChange={onCustomApiKeyChange} className={inputBaseClass}
-                      placeholder="输入您的 Gemini API 密钥" disabled={isLoading || !useCustomApiConfig} aria-label="自定义 Gemini API 密钥" required={useCustomApiConfig} />
+                      placeholder="输入您的 Gemini API 密钥" disabled={isLoading} aria-label="Gemini API 密钥" required={true} />
+                    <p className="text-xs mt-1 text-gray-500">请在此处输入您的Gemini API密钥，应用需要此密钥才能正常工作。</p>
                   </div>
                 </div>
               </div>
@@ -251,8 +240,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
               </div>
               
-              {!useCustomApiConfig && !useOpenAiApiConfig && (
-                <p className="text-xs text-gray-600 text-center mt-1 p-2 bg-gray-100 rounded-md">当前配置为使用环境变量中的 Google Gemini API 密钥。</p>
+              {!useOpenAiApiConfig && (
+                <p className="text-xs text-gray-600 text-center mt-1 p-2 bg-gray-100 rounded-md">请确保配置有效的 Gemini API 密钥，或使用 OpenAI 兼容 API。</p>
               )}
             </div>
           </section>
